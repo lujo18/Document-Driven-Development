@@ -1,0 +1,6 @@
+.serena/
+.ddd/
+node_modules/
+*.tmp
+*.log
+.ddd-readme.tmp.*

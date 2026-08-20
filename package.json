@@ -1,0 +1,21 @@
+{
+  "name": "ddd-setup",
+  "version": "1.0.0",
+  "description": "DDD Framework — Document Driven Development for AI agents. Skills, docs, scripts, and templates for planning, building, and verifying work.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lujo18/Document-Driven-Development.git"
+  },
+  "bin": {
+    "ddd-setup": "bin/ddd-setup.js"
+  },
+  "keywords": [
+    "ddd",
+    "document-driven-development",
+    "ai-agents",
+    "skills",
+    "planning",
+    "framework"
+  ]
+}
