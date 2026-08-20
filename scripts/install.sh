@@ -5,7 +5,7 @@ set -u
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
 [ -n "$SCRIPT_DIR" ] || SCRIPT_DIR=$(pwd)
 TARGET_DIR="" DIST_DIR=""
-MODE="install"; DRY_RUN=0; YES=0; FORCE=0
+MODE="install"; DRY_RUN=0; YES=0; FORCE=0; FRAMEWORK=""
 DEFAULT_AGENT_DIRS=".opencode .claude .agents"
 
 warn() { printf '%s\n' "WARN: $*"; }
@@ -52,13 +52,15 @@ Options:
   --yes               Non-interactive: auto-confirm all prompts.
   --force             Overwrite pre-existing files without prompting.
   --uninstall         Remove exactly the paths in .ddd/manifest.txt.
+  --framework <name>  Framework selector: opencode, claude, agents, cursor.
   --target <dir>      Consumer repo root (default: current directory).
   --dist <dir>        Distribution root (default: repo containing this script).
 
 Behavior: detect agent dirs (.opencode/.claude/.agents/.cursor) and prompt which
 to install to (detected = defaults); --yes uses detected dirs, fallback
-.opencode/.claude/.agents; .cursor only when present or chosen. Skills symlink,
-templates + installer copy. Never clobbers without confirmation. Writes
+.opencode/.claude/.agents; .cursor only when present or chosen. --framework
+skips detection and installs directly into the chosen framework's dir. Skills
+symlink, templates + installer copy. Never clobbers without confirmation. Writes
 .ddd/manifest.txt for safe --uninstall. Windows: Git Bash/WSL only.
 EOF
     exit 0
@@ -71,6 +73,7 @@ while [ "$#" -gt 0 ]; do
         --yes) YES=1 ;;
         --force) FORCE=1 ;;
         --uninstall) MODE="uninstall" ;;
+        --framework) [ "$#" -ge 2 ] || die "--framework requires a name (opencode, claude, agents, cursor)"; FRAMEWORK="$2"; shift ;;
         --target) [ "$#" -ge 2 ] || die "--target requires a dir"; TARGET_DIR="$2"; shift ;;
         --dist) [ "$#" -ge 2 ] || die "--dist requires a dir"; DIST_DIR="$2"; shift ;;
         *) die "unknown option: $1 (see --help)" ;;
@@ -119,7 +122,23 @@ valid_agent_dir() { # <name> ; 0 if valid
     return 0
 }
 
+framework_to_dir() { # <name> ; prints dir name or empty on invalid
+    case "$1" in
+        opencode) printf '.opencode' ;;
+        claude)   printf '.claude' ;;
+        agents)   printf '.agents' ;;
+        cursor)   printf '.cursor' ;;
+        *)        printf '' ;;
+    esac
+}
+
 select_agent_dirs() {
+    if [ -n "$FRAMEWORK" ]; then
+        _dir=$(framework_to_dir "$FRAMEWORK")
+        [ -n "$_dir" ] || die "unknown framework: $FRAMEWORK (valid: opencode, claude, agents, cursor)"
+        AGENT_DIRS="$_dir"
+        return 0
+    fi
     _det=$(detect_agent_dirs)
     _det=$(printf '%s' "$_det" | sed 's/^ *//;s/ *$//')
     if [ "$YES" -eq 1 ]; then
