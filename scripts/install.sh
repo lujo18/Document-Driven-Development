@@ -65,7 +65,7 @@ Options:
   --dry-run             Print the full action manifest; execute nothing.
   --yes / --non-interactive  Non-interactive: auto-confirm all prompts.
   --force               Overwrite pre-existing files without prompting.
-  --uninstall           Remove exactly the paths in .ddd/manifest.txt.
+  --uninstall / --delete  Remove exactly the paths in .ddd/manifest.txt.
   --framework <name>    Agent framework: opencode, claude, codex, cursor, generic.
   --target <dir>        Consumer repo root (default: current directory).
   --dist <dir>          Distribution root (default: repo containing this script).
@@ -84,7 +84,7 @@ while [ "$#" -gt 0 ]; do
         --dry-run) DRY_RUN=1 ;;
         --yes|--non-interactive) YES=1 ;;
         --force) FORCE=1 ;;
-        --uninstall) MODE="uninstall" ;;
+        --uninstall|--delete) MODE="uninstall" ;;
         --framework) [ "$#" -ge 2 ] || die "--framework requires a name (see --help)"; FRAMEWORK="$2"; shift ;;
         --target) [ "$#" -ge 2 ] || die "--target requires a dir"; TARGET_DIR="$2"; shift ;;
         --dist) [ "$#" -ge 2 ] || die "--dist requires a dir"; DIST_DIR="$2"; shift ;;
