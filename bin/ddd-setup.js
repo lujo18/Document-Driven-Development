@@ -38,7 +38,7 @@ function findSh() {
 
 try {
   execFileSync(findSh(), [SCRIPT, ...process.argv.slice(2)], {
-    cwd: ROOT,
+    cwd: process.cwd(),
     stdio: "inherit",
   });
 } catch (err) {
