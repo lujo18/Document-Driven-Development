@@ -88,6 +88,7 @@ while [ "$#" -gt 0 ]; do
         --framework) [ "$#" -ge 2 ] || die "--framework requires a name (see --help)"; FRAMEWORK="$2"; shift ;;
         --target) [ "$#" -ge 2 ] || die "--target requires a dir"; TARGET_DIR="$2"; shift ;;
         --dist) [ "$#" -ge 2 ] || die "--dist requires a dir"; DIST_DIR="$2"; shift ;;
+        --) shift ;;
         *) die "unknown option: $1 (see --help)" ;;
     esac
     shift
